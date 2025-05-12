@@ -2,34 +2,48 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.6.3' // or whatever name you configured in Jenkins -> Global Tool Configuration
-        jdk 'jdk-17'         // if you've configured JDK 17 in Jenkins tools
+        maven 'maven'    // Must match the name in Jenkins tool config
+        jdk 'jdk-17'           // Must match your JDK config name
+    }
+
+    environment {
+        MAVEN_HOME = "${tool 'maven'}"
+        JAVA_HOME = "${tool 'jdk-17'}"
+        PATH = "${env.JAVA_HOME}/bin:${env.MAVEN_HOME}/bin:${env.PATH}"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/mesivayenduri/sample-springboot-for-hap.git'
+                git url: 'https://github.com/mesivayenduri/sample-springboot-for-hap.git', branch: 'main'
             }
         }
+
         stage('Build') {
             steps {
-                sh 'mvn clean package'
+                sh 'mvn clean install'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                sh 'mvn package'
             }
         }
     }
-}
+
     post {
         success {
-            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
-            junit '**/target/surefire-reports/*.xml'
+            echo 'Build succeeded!'
         }
         failure {
-            echo 'Build failed!'
+            echo 'Build failed.'
         }
-    }
-}
-    triggers {
-        pollSCM('H/5 * * * *') // Poll SCM every 5 minutes
     }
 }

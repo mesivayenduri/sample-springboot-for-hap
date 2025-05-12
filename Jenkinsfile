@@ -7,16 +7,11 @@ pipeline {
     }
 
     environment {
-        MAVEN_HOME = "${tool ''}"
+        MAVEN_HOME = "${tool 'maven'}"
         JAVA_HOME = "${tool 'jdk-17'}"
         PATH = "${env.JAVA_HOME}/bin:${env.MAVEN_HOME}/bin:${env.PATH}"
     }
     stages {
-        // stage('Checkout') {
-        //     steps {
-        //         git 'https://github.com/mesivayenduri/sample-springboot-for-hap.git'
-        //     }
-        // }
         stage('Build') {
             steps {
                 sh 'mvn clean package'
@@ -24,6 +19,9 @@ pipeline {
         }
     }
 }
+    // Post-build actions
+    // This section is optional and can be customized as per your requirements
+    
     post {
         success {
             archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true

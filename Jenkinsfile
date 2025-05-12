@@ -6,11 +6,11 @@ pipeline {
         jdk 'jdk-17'         // if you've configured JDK 17 in Jenkins tools
     }
     stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/mesivayenduri/sample-springboot-for-hap.git'
-            }
-        }
+        // stage('Checkout') {
+        //     steps {
+        //         git 'https://github.com/mesivayenduri/sample-springboot-for-hap.git'
+        //     }
+        // }
         stage('Build') {
             steps {
                 sh 'mvn clean package'
